@@ -20,18 +20,13 @@ RUN apt-get update && apt-get install -y wget --no-install-recommends \
     && apt-get purge --auto-remove -y curl \
     && rm -rf /src/*.deb
 
-# Install missing shared libs for Chromium.
+COPY system-requirements.txt /tmp/system-requirements.txt
 RUN apt-get update && \
-    apt-get install -yq gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
-    libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 \
-    libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 \
-    libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
-    ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
-
-RUN apt-get update && apt-get -yq upgrade && apt-get -yqq install ssh
+    apt-get -y upgrade && \
+    apt-get -y autoremove && \
+    xargs apt-get -y -q install < /tmp/system-requirements.txt && \
+    apt-get clean
 
 RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
-    && mkdir -p /home/pptruser \
+    && mkdir -p /home/pptruser/.ssh \
     && chown -R pptruser:pptruser /home/pptruser
-
-USER pptruser
