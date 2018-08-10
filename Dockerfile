@@ -2,22 +2,6 @@ FROM node:8-slim
 
 LABEL maintainer="Eric Bidelman <ebidel@>"
 
-# Run this like so:
-# docker run -i --rm --cap-add=SYS_ADMIN \
-#   --name puppeteer-chrome puppeteer-chrome-linux \
-#    node -e "`cat yourscript.js`"
-#
-# or run `yarn serve` to start the webservice version.
-#
-
-# # Manually install missing shared libs for Chromium.
-# RUN apt-get update && \
-# apt-get install -yq gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
-# libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 \
-# libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 \
-# libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
-# ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
-
 # See https://crbug.com/795759
 RUN apt-get update && apt-get -yq upgrade && apt-get install \
     && apt-get autoremove && apt-get autoclean
@@ -36,4 +20,18 @@ RUN apt-get update && apt-get install -y wget --no-install-recommends \
     && apt-get purge --auto-remove -y curl \
     && rm -rf /src/*.deb
 
+# Install missing shared libs for Chromium.
+RUN apt-get update && \
+    apt-get install -yq gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
+    libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 \
+    libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 \
+    libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
+    ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+
 RUN apt-get update && apt-get -yq upgrade && apt-get -yqq install ssh
+
+RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+    && mkdir -p /home/pptruser \
+    && chown -R pptruser:pptruser /home/pptruser
+
+USER pptruser
