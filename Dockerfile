@@ -25,7 +25,7 @@ RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get -y autoremove && \
     xargs apt-get -y -q install < /tmp/system-requirements.txt && \
-    apt-get clean
+    apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && mkdir -p /home/pptruser/.ssh \
