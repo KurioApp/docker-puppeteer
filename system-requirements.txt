@@ -36,6 +36,10 @@ fonts-liberation
 libappindicator1
 libnss3
 lsb-release
+python
+python-dev
+python-pip
+python-virtualenv
 ssh
 xdg-utils
 wget
