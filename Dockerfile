@@ -1,4 +1,4 @@
-FROM node:10-slim
+FROM node:12-slim
 
 LABEL maintainer="Eka Cahya P <eka@kurio.co.id>"
 
